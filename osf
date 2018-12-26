@@ -25,6 +25,12 @@ fi
 # Variables that are going to help us.
 DOMAIN="$1"
 
+# Disable CPU monitoring if running on our
+# servers.
+if grep -q madpony.host /etc/hostname; then
+  monit unmonitor "$HOSTNAME"
+fi
+
 # Create .gz and .br files.
 find /srv/"$DOMAIN"/www/ -type f -a \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.json' -o -name '*.xml' -o -name '*.svg' -o -name '*.txt' \) -exec gzip -fkv9 {} \;
 find /srv/"$DOMAIN"/www/ -type f -a \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.json' -o -name '*.xml' -o -name '*.svg' -o -name '*.txt' \) -exec brotli -fvZ {} \;
@@ -33,3 +39,9 @@ find /srv/"$DOMAIN"/www/ -type f -a \( -name '*.html' -o -name '*.css' -o -name 
 # and optipng.
 find /srv/"$DOMAIN"/www/wp-content/ -type f -name "*.jp*" -exec jpegoptim -m76 --strip-all {} \;
 find /srv/"$DOMAIN"/www/wp-content/ -type f -name "*.png" -exec optipng -o7 -preserve {} \;
+
+# Enable CPU monitoring if running on our
+# servers.
+if grep -q madpony.host /etc/hostname; then
+  monit monitor "$HOSTNAME"
+fi
