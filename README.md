@@ -21,6 +21,7 @@ Keep in mind that we keep all WordPress installs under `/srv/DOMAIN/www/`, so ma
 
 ## Known issues
 * The script does not detect if a file is optimised, meaning that running this daily waste CPU cycles;
+* While `--verbose` is used for `brotli`, nothing is shown because the [feature has not been implemented upstream](https://github.com/google/brotli/issues/571);
 * No error handling whatsoever.
 
 ## TODO
