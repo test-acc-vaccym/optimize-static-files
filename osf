@@ -2,7 +2,7 @@
 #
 # Script Name: OSF
 # Script URL: https://madpony.co/open-source/
-# Version: 1.0.0
+# Version: 1.1.0
 # Author: James Pond
 # Author URL: https://madpony.co/
 # License: GNU General Public License v2 or later
@@ -18,7 +18,7 @@ fi
 # If no arguments are used, display usage to the user.
 if [  $# -le 0 ]; then
   echo 'USAGE'
-  echo 'optimize-static-files <DOMAIN>'
+  echo 'osf <DOMAIN> [--skip-images]'
   exit 1
 fi
 
@@ -35,10 +35,12 @@ fi
 find /srv/"$DOMAIN"/www/ -type f -a \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.json' -o -name '*.xml' -o -name '*.svg' -o -name '*.txt' \) -exec gzip -fkv9 {} \;
 find /srv/"$DOMAIN"/www/ -type f -a \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.json' -o -name '*.xml' -o -name '*.svg' -o -name '*.txt' \) -exec brotli -fvZ {} \;
 
-# Lossless image optimization with jpegoptim
-# and optipng.
-find /srv/"$DOMAIN"/www/wp-content/ -type f -name "*.jp*" -exec jpegoptim -m76 --strip-all {} \;
-find /srv/"$DOMAIN"/www/wp-content/ -type f -name "*.png" -exec optipng -o7 -preserve {} \;
+if [[ ! "$2" == "--skip-images" ]]; then
+  # Lossless image optimization with jpegoptim
+  # and optipng.
+  find /srv/"$DOMAIN"/www/wp-content/ -type f -name "*.jp*" -exec jpegoptim -m76 --strip-all {} \;
+  find /srv/"$DOMAIN"/www/wp-content/ -type f -name "*.png" -exec optipng -o7 -preserve {} \;
+fi
 
 # Enable CPU monitoring if running on our
 # servers.
