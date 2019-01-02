@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1.1 - 2019-01-02
+### Fixed
+- Location of the hostname check, to decrease the amount of email we get from Monit
+- Readability, to match the shell style guide from Google
+
 ## 1.1.0 - 2018-12-29
 ### Added
 - Check if the skip is running on our servers and disable Monit if it is

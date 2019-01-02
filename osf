@@ -2,7 +2,7 @@
 #
 # Script Name: OSF
 # Script URL: https://madpony.co/open-source/
-# Version: 1.1.0
+# Version: 1.1.1
 # Author: James Pond
 # Author URL: https://madpony.co/
 # License: GNU General Public License v2 or later
@@ -25,25 +25,32 @@ fi
 # Variables that are going to help us.
 DOMAIN="$1"
 
-# Disable CPU monitoring if running on our
-# servers.
-if grep -q madpony.host /etc/hostname; then
-  monit unmonitor "$HOSTNAME"
-fi
-
 # Create .gz and .br files.
-find /srv/"$DOMAIN"/www/ -type f -a \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.json' -o -name '*.xml' -o -name '*.svg' -o -name '*.txt' \) -exec gzip -fkv9 {} \;
-find /srv/"$DOMAIN"/www/ -type f -a \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.json' -o -name '*.xml' -o -name '*.svg' -o -name '*.txt' \) -exec brotli -fvZ {} \;
+find /srv/"$DOMAIN"/www/ -type f -a \( -name '*.html' -o -name '*.css' \
+-o -name '*.js' -o -name '*.json' -o -name '*.xml' -o -name '*.svg' -o -name '*.txt' \) \
+-exec gzip -fkv9 {} \;
+find /srv/"$DOMAIN"/www/ -type f -a \( -name '*.html' -o -name '*.css' \
+-o -name '*.js' -o -name '*.json' -o -name '*.xml' -o -name '*.svg' -o -name '*.txt' \) \
+-exec brotli -fvZ {} \;
 
 if [[ ! "$2" == "--skip-images" ]]; then
+  # Disable CPU monitoring if running on our servers.
+  if grep -q madpony.host /etc/hostname; then
+    monit unmonitor "$HOSTNAME"
+  fi
+
   # Lossless image optimization with jpegoptim
   # and optipng.
-  find /srv/"$DOMAIN"/www/wp-content/ -type f -name "*.jp*" -exec jpegoptim -m76 --strip-all {} \;
-  find /srv/"$DOMAIN"/www/wp-content/ -type f -name "*.png" -exec optipng -o7 -preserve {} \;
+  find /srv/"$DOMAIN"/www/wp-content/ -type f -name "*.jp*" -exec jpegoptim -m76 \
+  --strip-all {} \;
+  find /srv/"$DOMAIN"/www/wp-content/ -type f -name "*.png" -exec optipng -o7 \
+  -preserve {} \;
+
+  # Enable CPU monitoring if running on our servers.
+  if grep -q madpony.host /etc/hostname; then
+    monit monitor "$HOSTNAME"
+  fi
 fi
 
-# Enable CPU monitoring if running on our
-# servers.
-if grep -q madpony.host /etc/hostname; then
-  monit monitor "$HOSTNAME"
-fi
+# All is well.
+exit 0
