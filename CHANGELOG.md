@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1.2 - 2019-01-11
+### Removed
+- Check for our servers, as we changed the way we monitor CPU usage
+
 ## 1.1.1 - 2019-01-02
 ### Fixed
 - Location of the hostname check, to decrease the amount of email we get from Monit
